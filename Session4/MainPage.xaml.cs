@@ -1,23 +1,72 @@
-﻿namespace Session4;
+using System.Collections.ObjectModel;
+using Microsoft.EntityFrameworkCore;
+using Session4.Models;
 
+namespace Session4;
+
+public class InventoryManagement
+{
+    public string PartName {get; set;}
+    public string TransactionType {get; set;}
+    public DateOnly Date {get; set;}
+    public decimal Amount {get; set;}
+    public string Supplier {get; set;}    
+    public string DestinationWarehouse {get; set;}
+}
 public partial class MainPage : ContentPage
 {
-	int count = 0;
+    public List<InventoryManagement> _part  = new();
+    public MainPage()
+    {
+        InitializeComponent();
+        
+    }
 
-	public MainPage()
-	{
-		InitializeComponent();
-	}
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
 
-	private void OnCounterClicked(object? sender, EventArgs e)
-	{
-		count++;
+        using (var db = new Session4DbContext())
+        {
+            var order = await db.Orders
+                .Include(oi => oi.OrderItems)
+                .ThenInclude(p => p.Part)
+                .Include(oi => oi.TransactionType)
+                .Include(oi => oi.DestinationWarehouse)
+                .Include(oi => oi.Supplier)
+                .ToListAsync();
+            
+            _part = order.Select(oi => new InventoryManagement
+            {
+                PartName = oi.OrderItems.FirstOrDefault().Part.Name ?? "N/A",
+                TransactionType = oi.TransactionType.Name,
+                Date = oi.Date,
+                Amount = oi.OrderItems.FirstOrDefault().Amount,
+                DestinationWarehouse = oi?.DestinationWarehouse?.Name ?? "N/A",
+                Supplier = oi?.Supplier?.Name ?? "N/A"
 
-		if (count == 1)
-			CounterBtn.Text = $"Clicked {count} time";
-		else
-			CounterBtn.Text = $"Clicked {count} times";
+            }).ToList();
+            
+            ListOrders.ItemsSource = _part;
+        }
+    }
 
-		SemanticScreenReader.Announce(CounterBtn.Text);
-	}
+    private void RemoveButton_OnClicked(object? sender, EventArgs e)
+    {
+        var button = sender as Button;
+        var item = button?.CommandParameter as InventoryManagement;
+
+        if (item != null)
+        {
+            _part.Remove(item);
+            ListOrders.ItemsSource = null;
+            ListOrders.ItemsSource = _part;
+        }
+            
+    }
+
+    private async void OM_OnClicked(object? sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("..");
+    }
 }
