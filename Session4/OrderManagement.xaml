@@ -13,18 +13,115 @@
             <HorizontalStackLayout
                 Spacing="15">
                 <Label Text="Supplier"></Label>
-                            <Picker 
-                                x:Name="SupplierPicker"
-                                WidthRequest="200"></Picker>
+                <Picker 
+                    x:Name="SupplierPicker"
+                    WidthRequest="200"
+                    ItemDisplayBinding="{Binding Name}"></Picker>
             </HorizontalStackLayout>
             <HorizontalStackLayout
                 Spacing="15">
                  <Label Text="Warehouse"></Label>
                   <Picker
                       x:Name="WarehousePicker"
-                      WidthRequest="200"></Picker>
+                      WidthRequest="200"
+                      ItemDisplayBinding="{Binding Name}"></Picker>
             </HorizontalStackLayout>
-           
         </FlexLayout>
+        <HorizontalStackLayout
+            Spacing="25"
+            Grid.Row="1"
+            Margin="100,0,0,0">
+            <Label 
+                Text="Date: "></Label>
+            <DatePicker WidthRequest="200"></DatePicker>
+        </HorizontalStackLayout>
+        <Grid 
+            Grid.Row="2"
+            RowDefinitions="auto, auto, *"
+            >
+            <FlexLayout 
+                Grid.Row="0"
+                JustifyContent="SpaceAround"
+                Margin="0,0,0,25">
+                <HorizontalStackLayout
+                    >
+                    <Label 
+                        Text="Part Name:"></Label>
+                    <Picker WidthRequest="100"
+                            x:Name="PartNamePicker"
+                            ItemDisplayBinding="{Binding Name}"
+                            HeightRequest="40"          
+                            VerticalOptions="Center"></Picker>
+                </HorizontalStackLayout>
+                <HorizontalStackLayout 
+                    >
+                    <Label Text="Batch Number:"></Label>
+                    <Entry WidthRequest="100"
+                           HeightRequest="40"          
+                           VerticalOptions="Center"></Entry>
+                </HorizontalStackLayout>
+                <HorizontalStackLayout
+                    >
+                    <Label Text="Amount:"></Label>
+                    <Entry WidthRequest="75"
+                           HeightRequest="40"           
+                           VerticalOptions="Center"></Entry>
+                </HorizontalStackLayout>
+                <Button 
+                    Text="+ Add to list"
+                    BackgroundColor="Blue"
+                    ></Button>
+            </FlexLayout>
+            <Grid Grid.Row="1" 
+                  ColumnDefinitions="*, *, *, *"
+                  Margin="20,0,0,0">
+                <Label
+                    Text="Part Name"
+                    FontAttributes="Bold"
+                    Grid.Column="0"
+                    BackgroundColor="#F0F0F0"></Label>
+                <Label
+                    Text="Batch Number"
+                    FontAttributes="Bold"
+                    Grid.Column="1"
+                    BackgroundColor="#F0F0F0"></Label>
+                <Label
+                    Text="Amount"
+                    FontAttributes="Bold"
+                    Grid.Column="2"
+                    BackgroundColor="#F0F0F0"></Label>
+                <Label
+                    Text="Action"
+                    FontAttributes="Bold"
+                    Grid.Column="3"
+                    BackgroundColor="#F0F0F0"></Label>
+                </Grid>
+            <CollectionView 
+                x:Name="PartListCollection"
+                Margin="20,0,0,0"
+                Grid.Row="2">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="*, *, *, *">
+                            <Label 
+                                Grid.Column="0"
+                                Text="{Binding PartName}"></Label>
+                            <Label 
+                                Grid.Column="1"
+                                Text="{Binding BatchNumber}"></Label>
+                            <Label 
+                                Grid.Column="2"
+                                Text="{Binding Amount}"></Label>
+                            <Button
+                                BackgroundColor="Transparent"
+                                Text="Remove"
+                                CommandParameter="{Binding .}"
+                                ></Button>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+        
     </Grid>
 </ContentPage>
