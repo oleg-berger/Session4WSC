@@ -12,6 +12,8 @@ public class InventoryManagement
     public decimal Amount {get; set;}
     public string Supplier {get; set;}    
     public string DestinationWarehouse {get; set;}
+    public long OrderId { get; set; }
+    public long TransactionTypeID { get; set; }
 }
 public partial class MainPage : ContentPage
 {
@@ -38,6 +40,8 @@ public partial class MainPage : ContentPage
             
             _part = order.Select(oi => new InventoryManagement
             {
+                OrderId = oi.Id,
+                TransactionTypeID =  oi.TransactionTypeId,
                 PartName = oi.OrderItems.FirstOrDefault().Part.Name ?? "N/A",
                 TransactionType = oi.TransactionType.Name,
                 Date = oi.Date,
@@ -67,6 +71,28 @@ public partial class MainPage : ContentPage
 
     private async void OM_OnClicked(object? sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync("..");
+        await Shell.Current.GoToAsync("OrderManagement");
+    }
+
+    private async void WM_OnClicked(object? sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("WearehouseManagement");
+    }
+
+    private async void IR_OnClicked(object? sender, EventArgs e)
+    {
+       await Shell.Current.GoToAsync("InventoryReport");
+    }
+
+
+    private async void EditButton_OnClicked(object? sender, EventArgs e)
+    {
+        if (sender is Button button && button.CommandParameter is InventoryManagement item)
+        {
+            if (item.TransactionTypeID == 1)
+                await Shell.Current.GoToAsync("OrderManagement");
+            else if(item.TransactionTypeID == 2)
+                await  Shell.Current.GoToAsync("WearehouseManagement");
+        }
     }
 }

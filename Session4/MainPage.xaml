@@ -20,13 +20,17 @@
                     Text="Warehouse Management"
                     HeightRequest="5"
                     BackgroundColor="Transparent"
-                    TextColor="Blue">
+                    TextColor="Blue"
+                    x:Name="WM"
+                    Clicked="WM_OnClicked">
                 </Button>
                <Button
                    Text="Inventory Report"
                    HeightRequest="5"
                    BackgroundColor="Transparent"
-                   TextColor="Blue">
+                   TextColor="Blue"
+                   x:Name="IR"
+                   Clicked="IR_OnClicked">
                </Button>
              
        </HorizontalStackLayout>
@@ -82,13 +86,26 @@
                         <Label Grid.Column="3" Text="{Binding Amount}"></Label>
                         <Label Grid.Column="4" Text="{Binding Supplier}"></Label>
                         <Label Grid.Column="5" Text="{Binding DestinationWarehouse}"></Label>
-                        <Button Grid.Column="6" 
-                                Text="Edit Remove" 
-                                BackgroundColor="Transparent" 
-                                TextColor="Blue"
-                                x:Name="RemoveButton"
-                                Clicked="RemoveButton_OnClicked"
-                                CommandParameter="{Binding .}"></Button>
+                        <FlexLayout Grid.Column="6"
+                                    JustifyContent="SpaceBetween">
+                            <Button 
+                            Text="Edit " 
+                            BackgroundColor="Transparent" 
+                            TextColor="Blue"
+                            x:Name="EditButton"
+                            Clicked="EditButton_OnClicked"
+                            CommandParameter="{Binding .}"
+                            ></Button>
+                            <Button
+                            Text="Remove" 
+                            BackgroundColor="Transparent" 
+                            TextColor="Blue"
+                            x:Name="RemoveButton"
+                            Clicked="RemoveButton_OnClicked"
+                            CommandParameter="{Binding .}"
+                           ></Button>
+                        </FlexLayout>
+                        
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

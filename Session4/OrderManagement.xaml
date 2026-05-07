@@ -3,7 +3,28 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Session4.OrderManagement">
-    <ContentPage.Content>
-        
-    </ContentPage.Content>
+    <Grid 
+        RowDefinitions="auto, auto, *, auto"
+        RowSpacing="25">
+        <FlexLayout 
+            Grid.Row="0"
+            Margin="25"
+            JustifyContent="SpaceAround">
+            <HorizontalStackLayout
+                Spacing="15">
+                <Label Text="Supplier"></Label>
+                            <Picker 
+                                x:Name="SupplierPicker"
+                                WidthRequest="200"></Picker>
+            </HorizontalStackLayout>
+            <HorizontalStackLayout
+                Spacing="15">
+                 <Label Text="Warehouse"></Label>
+                  <Picker
+                      x:Name="WarehousePicker"
+                      WidthRequest="200"></Picker>
+            </HorizontalStackLayout>
+           
+        </FlexLayout>
+    </Grid>
 </ContentPage>
