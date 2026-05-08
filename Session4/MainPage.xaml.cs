@@ -36,7 +36,7 @@ public partial class MainPage : ContentPage
                 .Include(oi => oi.TransactionType)
                 .Include(oi => oi.DestinationWarehouse)
                 .Include(oi => oi.Supplier)
-                .OrderBy(oi => oi.Date)
+                .OrderByDescending(oi => oi.Date)
                 .ThenBy(oi => oi.TransactionTypeId)
                 .ToListAsync();
             

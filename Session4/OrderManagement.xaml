@@ -33,7 +33,8 @@
             Margin="100,0,0,0">
             <Label 
                 Text="Date: "></Label>
-            <DatePicker WidthRequest="200"></DatePicker>
+            <DatePicker WidthRequest="200"
+                        x:Name="DatePicker"></DatePicker>
         </HorizontalStackLayout>
         <Grid 
             Grid.Row="2"
@@ -122,12 +123,30 @@
                                 CommandParameter="{Binding .}"
                                 TextColor="Red"
                                 Grid.Column="3"
+                                x:Name="RemoveButton"
+                                Clicked="RemoveButton_OnClicked"
                                 ></Button>
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
         </Grid>
-        
+        <FlexLayout
+            JustifyContent="SpaceEvenly"
+            Grid.Row="3"
+            Margin="0,0,0,20">
+            <Button
+               Text="Submit"
+               x:Name="SubmitButton"
+               Clicked="SubmitButton_OnClicked"
+               BackgroundColor="Green"
+               WidthRequest="150"></Button>
+            <Button
+                Text="Cancel"
+                x:Name="CancelButton"
+                Clicked="CancelButton_OnClicked"
+                BackgroundColor="Red"
+                WidthRequest="150"></Button>
+        </FlexLayout>
     </Grid>
 </ContentPage>

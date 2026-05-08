@@ -22,6 +22,7 @@ public class PartListData
 public partial class OrderManagement : ContentPage
 {
     public ObservableCollection<PartListData> SelectedData { get; set; } = new();
+    
     public OrderManagement()
     {
         InitializeComponent();
@@ -85,5 +86,69 @@ public partial class OrderManagement : ContentPage
         AmountEntry.Text = string.Empty;
         PartNamePicker.SelectedItem = null;
         BatchNumberEntry.Text = string.Empty;
+    }
+
+    private async void RemoveButton_OnClicked(object? sender, EventArgs e)
+    {
+        var button = sender as Button;
+        var item = button?.CommandParameter as  PartListData;
+        if (item != null)
+        {
+            var list = PartListCollection.ItemsSource as IList<PartListData>;
+            list.Remove(item);
+        }
+    }
+
+    private async void SubmitButton_OnClicked(object? sender, EventArgs e)
+    {
+        if (SupplierPicker.SelectedItem == null)
+        {
+            await DisplayAlertAsync("Error", "Please select a supplier", "OK");
+            return;
+        }
+
+        if (WarehousePicker.SelectedItem == null)
+        {
+            await  DisplayAlertAsync("Error", "Please select a warehouse", "OK");
+            return;
+        }
+
+        var selectedSupplier = SupplierPicker.SelectedItem as Suppliers;
+        var warehousePicker = WarehousePicker.SelectedItem as Warehouses;
+        
+        using (var db = new Session4DbContext())
+        {
+            var newOrder = new Orders
+            {
+                TransactionTypeId = 1,
+                SupplierId = selectedSupplier.Id,
+                SourceWarehouseId = null,
+                DestinationWarehouseId = warehousePicker.Id,
+                Date = DateOnly.FromDateTime(DateTime.Now),
+            };
+            
+            db.Orders.Add(newOrder);
+            await db.SaveChangesAsync();
+            
+            foreach (var part in SelectedData)
+            {
+                db.OrderItems.Add(new OrderItems
+                {
+                    OrderId = newOrder.Id,
+                    PartId = part.PartId,
+                    BatchNumber = part.BatchNumber,
+                    Amount = part.Amount,
+                });
+            }
+
+            await db.SaveChangesAsync();
+        }
+        await DisplayAlertAsync("Sucess", "Order Added", "OK");
+        await Shell.Current.GoToAsync("..");
+    }
+
+    private async void CancelButton_OnClicked(object? sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("..");
     }
 }
