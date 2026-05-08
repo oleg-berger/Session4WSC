@@ -36,20 +36,22 @@ public partial class MainPage : ContentPage
                 .Include(oi => oi.TransactionType)
                 .Include(oi => oi.DestinationWarehouse)
                 .Include(oi => oi.Supplier)
+                .OrderBy(oi => oi.Date)
+                .ThenBy(oi => oi.TransactionTypeId)
                 .ToListAsync();
             
-            _part = order.Select(oi => new InventoryManagement
+            _part = order.SelectMany(oi => oi.OrderItems.Select(item => new InventoryManagement
             {
                 OrderId = oi.Id,
                 TransactionTypeID =  oi.TransactionTypeId,
-                PartName = oi.OrderItems.FirstOrDefault().Part.Name ?? "N/A",
+                PartName = item.Part.Name ?? "N/A",
                 TransactionType = oi.TransactionType.Name,
                 Date = oi.Date,
-                Amount = oi.OrderItems.FirstOrDefault().Amount,
+                Amount = item.Amount,
                 DestinationWarehouse = oi?.DestinationWarehouse?.Name ?? "N/A",
                 Supplier = oi?.Supplier?.Name ?? "N/A"
 
-            }).ToList();
+            })).ToList();
             
             ListOrders.ItemsSource = _part;
         }
@@ -90,9 +92,9 @@ public partial class MainPage : ContentPage
         if (sender is Button button && button.CommandParameter is InventoryManagement item)
         {
             if (item.TransactionTypeID == 1)
-                await Shell.Current.GoToAsync("OrderManagement");
+                await Shell.Current.GoToAsync($"OrderManagement?orderId={item.OrderId}");
             else if(item.TransactionTypeID == 2)
-                await  Shell.Current.GoToAsync("WearehouseManagement");
+                await  Shell.Current.GoToAsync($"WearehouseManagement?orderId={item.OrderId}");
         }
     }
 }

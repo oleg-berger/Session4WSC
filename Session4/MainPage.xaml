@@ -83,7 +83,25 @@
                         <Label Grid.Column="0" Text="{Binding PartName}"></Label>
                         <Label Grid.Column="1" Text="{Binding TransactionType}"></Label>
                         <Label Grid.Column="2" Text="{Binding Date}"></Label>
-                        <Label Grid.Column="3" Text="{Binding Amount}"></Label>
+                        <Label Grid.Column="3" Text="{Binding Amount}"
+                               VerticalTextAlignment="Center"
+                               HorizontalTextAlignment="Center">
+                            <Label.Triggers>
+                                <DataTrigger
+                                    TargetType="Label"
+                                    Binding="{Binding TransactionTypeID}"
+                                    Value="1">
+                                    <Setter Property="BackgroundColor" Value="#d4edda"/>
+                                </DataTrigger>
+                                <DataTrigger
+                                    TargetType="Label"
+                                    Binding="{Binding TransactionTypeID}"
+                                    Value="2">
+                                    <Setter Property="BackgroundColor"
+                                            Value="#cce5ff"></Setter>
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
                         <Label Grid.Column="4" Text="{Binding Supplier}"></Label>
                         <Label Grid.Column="5" Text="{Binding DestinationWarehouse}"></Label>
                         <FlexLayout Grid.Column="6"
