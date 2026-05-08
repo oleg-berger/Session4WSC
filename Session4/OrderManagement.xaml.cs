@@ -19,10 +19,20 @@ public class PartListData
     public decimal Amount { get; set; }
     
 }
+[QueryProperty(nameof(OrderId), "orderId")]
 public partial class OrderManagement : ContentPage
 {
-    public ObservableCollection<PartListData> SelectedData { get; set; } = new();
     
+    public ObservableCollection<PartListData> SelectedData { get; set; } = new();
+
+    private long _orderId;
+
+    public long OrderId
+    {
+        get => _orderId;
+        set => _orderId = value;
+    }
+
     public OrderManagement()
     {
         InitializeComponent();
@@ -33,7 +43,48 @@ public partial class OrderManagement : ContentPage
     {
         base.OnAppearing();
         await LoadPicker();
-        
+        if (_orderId != null)
+            await LoadOrderForEdit(_orderId);
+    }
+    
+    private async Task LoadOrderForEdit(long orderId)
+    {
+        using var db = new Session4DbContext();
+        var order = await db.Orders
+            .Include(o => o.OrderItems)
+            .ThenInclude(oi => oi.Part)
+            .Include(o => o.Supplier)
+            .Include(o => o.DestinationWarehouse)
+            .FirstOrDefaultAsync(o => o.Id == orderId);
+
+        if (order == null) return;
+
+        // заполняем Supplier
+        SupplierPicker.SelectedItem = SupplierPicker.ItemsSource
+            .Cast<Suppliers>()
+            .FirstOrDefault(s => s.Id == order.SupplierId);
+
+        // заполняем Warehouse
+        WarehousePicker.SelectedItem = WarehousePicker.ItemsSource
+            .Cast<Warehouses>()
+            .FirstOrDefault(w => w.Id == order.DestinationWarehouseId);
+
+        // заполняем дату
+        DatePicker.Date = order.Date.ToDateTime(TimeOnly.MinValue);
+
+        // заполняем список деталей
+        SelectedData.Clear();
+        foreach (var item in order.OrderItems)
+        {
+            SelectedData.Add(new PartListData
+            {
+                PartId = item.PartId,
+                PartName = item.Part.Name,
+                BatchNumber = item.BatchNumber,
+                Amount = item.Amount,
+                OrderId = orderId
+            });
+        }
     }
     public async Task LoadPicker()
     {
