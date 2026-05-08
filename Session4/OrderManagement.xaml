@@ -58,18 +58,22 @@
                     <Label Text="Batch Number:"></Label>
                     <Entry WidthRequest="100"
                            HeightRequest="40"          
-                           VerticalOptions="Center"></Entry>
+                           VerticalOptions="Center"
+                           x:Name="BatchNumberEntry"></Entry>
                 </HorizontalStackLayout>
                 <HorizontalStackLayout
                     >
                     <Label Text="Amount:"></Label>
                     <Entry WidthRequest="75"
                            HeightRequest="40"           
-                           VerticalOptions="Center"></Entry>
+                           VerticalOptions="Center"
+                           x:Name="AmountEntry"></Entry>
                 </HorizontalStackLayout>
                 <Button 
                     Text="+ Add to list"
                     BackgroundColor="Blue"
+                    x:Name="AddButton"
+                    Clicked="AddButton_OnClicked"
                     ></Button>
             </FlexLayout>
             <Grid Grid.Row="1" 
@@ -116,6 +120,8 @@
                                 BackgroundColor="Transparent"
                                 Text="Remove"
                                 CommandParameter="{Binding .}"
+                                TextColor="Red"
+                                Grid.Column="3"
                                 ></Button>
                         </Grid>
                     </DataTemplate>
