@@ -3,7 +3,150 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Session4.WearehouseManagement">
-    <ContentPage.Content>
-        <Label Text="Wearehouse management"></Label>
-    </ContentPage.Content>
+    <Grid 
+        RowDefinitions="auto, auto, *, auto"
+        RowSpacing="25">
+        <FlexLayout 
+            Grid.Row="0"
+            Margin="25"
+            JustifyContent="SpaceAround">
+            <HorizontalStackLayout
+                Spacing="15">
+                <Label Text="Source Warehouse"></Label>
+                <Picker 
+                    x:Name="SourceWarehousePicker"
+                    WidthRequest="200"
+                    ItemDisplayBinding="{Binding Name}"></Picker>
+            </HorizontalStackLayout>
+            <HorizontalStackLayout
+                Spacing="15">
+                 <Label Text="Destination Warehouse"></Label>
+                  <Picker
+                      x:Name="DestinationWarehousePicker"
+                      WidthRequest="200"
+                      ItemDisplayBinding="{Binding Name}"></Picker>
+            </HorizontalStackLayout>
+        </FlexLayout>
+        <HorizontalStackLayout
+            Spacing="25"
+            Grid.Row="1"
+            Margin="100,0,0,0">
+            <Label 
+                Text="Date: "></Label>
+            <DatePicker WidthRequest="200"
+                        x:Name="DatePicker"></DatePicker>
+        </HorizontalStackLayout>
+        <Grid 
+            Grid.Row="2"
+            RowDefinitions="auto, auto, *"
+            >
+            <FlexLayout 
+                Grid.Row="0"
+                JustifyContent="SpaceAround"
+                Margin="0,0,0,25">
+                <HorizontalStackLayout
+                    >
+                    <Label 
+                        Text="Part Name:"></Label>
+                    <Picker WidthRequest="100"
+                            x:Name="PartNamePicker"
+                            ItemDisplayBinding="{Binding Name}"
+                            HeightRequest="40"          
+                            VerticalOptions="Center"></Picker>
+                </HorizontalStackLayout>
+                <HorizontalStackLayout 
+                    >
+                    <Label Text="Batch Number:"></Label>
+                    <Entry WidthRequest="100"
+                           HeightRequest="40"          
+                           VerticalOptions="Center"
+                           x:Name="BatchNumberEntry"></Entry>
+                </HorizontalStackLayout>
+                <HorizontalStackLayout
+                    >
+                    <Label Text="Amount:"></Label>
+                    <Entry WidthRequest="75"
+                           HeightRequest="40"           
+                           VerticalOptions="Center"
+                           x:Name="AmountEntry"></Entry>
+                </HorizontalStackLayout>
+                <Button 
+                    Text="+ Add to list"
+                    BackgroundColor="Blue"
+                    x:Name="AddButton"
+                   Clicked="AddButton_OnClicked"
+                    ></Button>
+            </FlexLayout>
+            <Grid Grid.Row="1" 
+                  ColumnDefinitions="*, *, *, *"
+                  Margin="20,0,0,0">
+                <Label
+                    Text="Part Name"
+                    FontAttributes="Bold"
+                    Grid.Column="0"
+                    BackgroundColor="#F0F0F0"></Label>
+                <Label
+                    Text="Batch Number"
+                    FontAttributes="Bold"
+                    Grid.Column="1"
+                    BackgroundColor="#F0F0F0"></Label>
+                <Label
+                    Text="Amount"
+                    FontAttributes="Bold"
+                    Grid.Column="2"
+                    BackgroundColor="#F0F0F0"></Label>
+                <Label
+                    Text="Action"
+                    FontAttributes="Bold"
+                    Grid.Column="3"
+                    BackgroundColor="#F0F0F0"></Label>
+                </Grid>
+            <CollectionView 
+                x:Name="PartListCollection"
+                Margin="20,0,0,0"
+                Grid.Row="2">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="*, *, *, *">
+                            <Label 
+                                Grid.Column="0"
+                                Text="{Binding PartName}"></Label>
+                            <Label 
+                                Grid.Column="1"
+                                Text="{Binding BatchNumber}"></Label>
+                            <Label 
+                                Grid.Column="2"
+                                Text="{Binding Amount}"></Label>
+                            <Button
+                                BackgroundColor="Transparent"
+                                Text="Remove"
+                                CommandParameter="{Binding .}"
+                                TextColor="Red"
+                                Grid.Column="3"
+                                x:Name="RemoveButton"
+                                Clicked="RemoveButton_OnClicked"
+                                ></Button>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+        <FlexLayout
+            JustifyContent="SpaceEvenly"
+            Grid.Row="3"
+            Margin="0,0,0,20">
+            <Button
+               Text="Submit"
+               x:Name="SubmitButton"
+               Clicked="SubmitButton_OnClicked"
+               BackgroundColor="Green"
+               WidthRequest="150"></Button>
+            <Button
+                Text="Cancel"
+                x:Name="CancelButton"
+                Clicked="CancelButton_OnClicked"
+                BackgroundColor="Red"
+                WidthRequest="150"></Button>
+        </FlexLayout>
+    </Grid>
 </ContentPage>

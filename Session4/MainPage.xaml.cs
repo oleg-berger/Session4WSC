@@ -57,7 +57,7 @@ public partial class MainPage : ContentPage
         }
     }
 
-    private void RemoveButton_OnClicked(object? sender, EventArgs e)
+    private async void RemoveButton_OnClicked(object? sender, EventArgs e)
     {
         var button = sender as Button;
         var item = button?.CommandParameter as InventoryManagement;
@@ -68,7 +68,6 @@ public partial class MainPage : ContentPage
             ListOrders.ItemsSource = null;
             ListOrders.ItemsSource = _part;
         }
-            
     }
 
     private async void OM_OnClicked(object? sender, EventArgs e)

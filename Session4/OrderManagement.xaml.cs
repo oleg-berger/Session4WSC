@@ -10,15 +10,7 @@ using Session4.Models;
 
 namespace Session4;
 
-public class PartListData
-{
-    public long OrderId {get; set;}
-    public long PartId {get; set;}
-    public string PartName { get; set; }
-    public string BatchNumber { get; set; }
-    public decimal Amount { get; set; }
-    
-}
+
 [QueryProperty(nameof(OrderId), "orderId")]
 public partial class OrderManagement : ContentPage
 {
@@ -129,7 +121,7 @@ public partial class OrderManagement : ContentPage
             {
                 PartId = selectedPicker.Id,
                 Amount = amount,
-                BatchNumber = finalBatch,
+                BatchNumber = finalBatch ?? "N/A",
                 PartName = selectedPicker.Name,
             };
         
