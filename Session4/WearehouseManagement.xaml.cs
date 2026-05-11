@@ -8,17 +8,71 @@ using Microsoft.EntityFrameworkCore;
 using Session4.Models;
 
 namespace Session4;
-
+[QueryProperty(nameof(OrderId), "orderId")]
 public partial class WearehouseManagement : ContentPage
 {
     public ObservableCollection<PartListData> SelectedData { get; set; }= new();
+    private long _orderId;
+
+    public long OrderId
+    {
+        get => _orderId;
+        set => _orderId = value;
+    }
+
     public WearehouseManagement()
     {
         InitializeComponent();
-        LoadPicker();
+        
         PartListCollection.ItemsSource = SelectedData;
+        
     }
 
+    protected async override void OnAppearing()
+    {
+        await LoadPicker();
+        if (_orderId != null)
+                 await LoadFromEdit(_orderId);
+        base.OnAppearing();
+    }
+
+    private async Task LoadFromEdit(long orderId)
+    {
+        using (var db = new Session4DbContext())
+        {
+            var order = await db.Orders
+                .Include(o => o.DestinationWarehouse)
+                .Include(o => o.SourceWarehouse)
+                .Include(o => o.OrderItems)
+                .ThenInclude(p => p.Part)
+                .FirstOrDefaultAsync(o => o.Id == orderId);
+            
+            if (order == null) return;
+            
+            SourceWarehousePicker.SelectedItem = SourceWarehousePicker.ItemsSource
+                .Cast<Warehouses>()
+                .FirstOrDefault(w => w.Id == order.SourceWarehouseId);
+
+            DestinationWarehousePicker.SelectedItem = DestinationWarehousePicker.ItemsSource
+                .Cast<Warehouses>()
+                .FirstOrDefault(w => w.Id == order.DestinationWarehouseId);
+            DatePicker.Date = order.Date.ToDateTime(TimeOnly.MinValue);
+            
+            SelectedData.Clear();
+            foreach (var item in order.OrderItems)
+            {
+                SelectedData.Add(new PartListData()
+                {
+                    PartId = item.PartId,
+                    Amount = item.Amount,
+                    BatchNumber = item.BatchNumber,
+                    PartName = item.Part?.Name ?? "N/A",
+                    OrderId = orderId
+                });
+            }
+        }
+    }
+    
     private async Task LoadPicker()
     {
         await using (var db = new Session4DbContext())
