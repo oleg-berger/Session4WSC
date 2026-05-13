@@ -3,7 +3,100 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Session4.InventoryReport">
-    <ContentPage.Content>
-        <Label Text="Inventory report"></Label>
-    </ContentPage.Content>
+    <Grid RowDefinitions="auto,auto,auto, *">
+        <FlexLayout
+            Grid.Row="0"
+            JustifyContent="SpaceEvenly"
+            Margin="0,20,0,0">
+            <HorizontalStackLayout
+                Spacing="20">
+                 <Label 
+                    Text="warehouse"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"></Label>
+                <Picker
+                    x:Name="WarehousePicker"
+                    WidthRequest="150"
+                    ItemDisplayBinding="{Binding Name}"></Picker>
+            </HorizontalStackLayout>
+           <HorizontalStackLayout
+               Spacing="20">
+               <RadioButton
+                   Content="Current stock"
+                   IsChecked="True"
+                   GroupName="InventoryType"
+                   x:Name="CurrentStockButton"></RadioButton>
+               <RadioButton
+                   Content="Received stock"
+                   GroupName="InventoryType"
+                   x:Name="ReceivedStockButton">
+               </RadioButton>
+               <RadioButton
+                   Content="Out of stock"
+                   GroupName="InventoryType"
+                   x:Name="OutOfStockButton"></RadioButton>
+           </HorizontalStackLayout>
+        </FlexLayout>
+        <HorizontalStackLayout
+            Margin="0,10,40,10"
+            Grid.Row="1"
+            HorizontalOptions="End">
+             <Button
+                 Text="Generate report"
+                 BackgroundColor="DimGrey"
+                 TextColor="Wheat"
+                 x:Name="GenerateReport"
+                 Clicked="GenerateReport_OnClicked"></Button>
+        </HorizontalStackLayout>
+        <Grid
+            ColumnDefinitions="*, *, *, *"
+            Grid.Row="2"
+            Margin="0,20,0,0">
+            <Label Text="Part Name"
+                   BackgroundColor="#F0F0F0"
+                   FontAttributes="Bold"
+                   Grid.Column="0"></Label>
+            <Label Text="Current stock"
+                   BackgroundColor="#F0F0F0"
+                   FontAttributes="Bold"
+                   Grid.Column="1"></Label>
+            <Label Text="Received Stock"
+                   BackgroundColor="#F0F0F0"
+                   FontAttributes="Bold"
+                   Grid.Column="2"></Label>
+            <Label Text="Action"
+                   BackgroundColor="#F0F0F0"
+                   FontAttributes="Bold"
+                   Grid.Column="3"></Label>
+        </Grid>
+        
+       
+        <CollectionView
+            Grid.Row="3"
+            x:Name="ResultList">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid
+                        ColumnDefinitions="*, *, *, *">
+                        <Label
+                            Text="{Binding PartName}"
+                            Grid.Column="0"></Label>
+                        <Label
+                            Text="{Binding CurrentStock}"
+                            Grid.Column="1"></Label>
+                        <Label
+                            Text="{Binding ReceivedStock}"
+                            Grid.Column="2"></Label>
+                        <Button
+                            Text="View butch numbers"
+                            BackgroundColor="Transparent"
+                            TextColor="Blue"
+                            x:Name="ViewButchNumBut"
+                            Clicked="ViewButchNumBut_OnClicked"
+                            Grid.Column="3"></Button>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
 </ContentPage>
