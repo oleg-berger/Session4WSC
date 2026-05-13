@@ -8,6 +8,13 @@ using Session4.Models;
 
 namespace Session4;
 
+public class BatchNumberResult
+{
+    public string BatchNumber { get; set; }
+    public decimal CurrentStock { get; set; }
+    public decimal ReceivedStock { get; set; }
+}
+
 public class InventoryReportResult
 {
     public long PartId { get; set; }
@@ -43,9 +50,56 @@ public partial class InventoryReport : ContentPage
         }
     }
 
-    private void ViewButchNumBut_OnClicked(object? sender, EventArgs e)
-    {
-        throw new NotImplementedException();
+    private async void ViewButchNumBut_OnClicked(object? sender, EventArgs e)
+    { 
+        if (sender is Button button && button.CommandParameter is InventoryReportResult item)
+        {
+        var selectedWarehouse = WarehousePicker.SelectedItem as Warehouses;
+
+        using var db = new Session4DbContext();
+        var orders = await db.Orders
+            .Include(o => o.OrderItems)
+            .ToListAsync();
+
+        // все batch numbers для этой детали
+        var batches = orders
+            .Where(o => o.TransactionTypeId == 1 
+                     && o.DestinationWarehouseId == selectedWarehouse.Id)
+            .SelectMany(o => o.OrderItems)
+            .Where(i => i.PartId == item.PartId && i.BatchNumber != null)
+            .GroupBy(i => i.BatchNumber)
+            .Select(g =>
+            {
+                var transferOut = orders
+                    .Where(o => o.TransactionTypeId == 2 
+                             && o.SourceWarehouseId == selectedWarehouse.Id)
+                    .SelectMany(o => o.OrderItems)
+                    .Where(i => i.PartId == item.PartId && i.BatchNumber == g.Key)
+                    .Sum(i => i.Amount);
+
+                var transferIn = orders
+                    .Where(o => o.TransactionTypeId == 2 
+                             && o.DestinationWarehouseId == selectedWarehouse.Id)
+                    .SelectMany(o => o.OrderItems)
+                    .Where(i => i.PartId == item.PartId && i.BatchNumber == g.Key)
+                    .Sum(i => i.Amount);
+
+                var received = g.Sum(i => i.Amount);
+
+                return new BatchNumberResult
+                {
+                    BatchNumber = g.Key,
+                    ReceivedStock = received,
+                    CurrentStock = received + transferIn - transferOut
+                };
+            }).ToList();
+
+        // показываем в диалоге
+        var message = string.Join("\n", batches.Select(b => 
+            $"Batch: {b.BatchNumber} | Current: {b.CurrentStock} | Received: {b.ReceivedStock}"));
+        
+        await DisplayAlert($"Batch Numbers — {item.PartName}", message, "OK");
+    }
     }
 
     private async void GenerateReport_OnClicked(object? sender, EventArgs e)

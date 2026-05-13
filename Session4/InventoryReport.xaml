@@ -93,6 +93,7 @@
                             TextColor="Blue"
                             x:Name="ViewButchNumBut"
                             Clicked="ViewButchNumBut_OnClicked"
+                            CommandParameter="{Binding .}"
                             Grid.Column="3"></Button>
                     </Grid>
                 </DataTemplate>
