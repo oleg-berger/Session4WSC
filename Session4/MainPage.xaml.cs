@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Reflection.Metadata.Ecma335;
 using Microsoft.EntityFrameworkCore;
 using Session4.Models;
 
@@ -17,11 +18,12 @@ public class InventoryManagement
 }
 public partial class MainPage : ContentPage
 {
-    public List<InventoryManagement> _part  = new();
+   
+    public ObservableCollection<InventoryManagement> _part { get; set; } = new();
     public MainPage()
     {
         InitializeComponent();
-        
+        ListOrders.ItemsSource = _part;
     }
 
     protected override async void OnAppearing()
@@ -40,20 +42,27 @@ public partial class MainPage : ContentPage
                 .ThenBy(oi => oi.TransactionTypeId)
                 .ToListAsync();
             
-            _part = order.SelectMany(oi => oi.OrderItems.Select(item => new InventoryManagement
+            _part.Clear();
+            foreach (var oi in order)
             {
-                OrderId = oi.Id,
-                TransactionTypeID =  oi.TransactionTypeId,
-                PartName = item.Part.Name ?? "N/A",
-                TransactionType = oi.TransactionType.Name,
-                Date = oi.Date,
-                Amount = item.Amount,
-                DestinationWarehouse = oi?.DestinationWarehouse?.Name ?? "N/A",
-                Supplier = oi?.Supplier?.Name ?? "N/A"
+                foreach (var item in oi.OrderItems )
+                {
+                    _part.Add(new InventoryManagement
+                    {
 
-            })).ToList();
-            
-            ListOrders.ItemsSource = _part;
+                        OrderId = oi.Id,
+                        TransactionTypeID = oi.TransactionTypeId,
+                        PartName = item.Part.Name ?? "N/A",
+                        TransactionType = oi.TransactionType.Name,
+                        Date = oi.Date,
+                        Amount = item.Amount,
+                        DestinationWarehouse = oi?.DestinationWarehouse?.Name ?? "N/A",
+                        Supplier = oi?.Supplier?.Name ?? "N/A"
+
+
+                    });
+                }
+            }
         }
     }
 
@@ -63,11 +72,8 @@ public partial class MainPage : ContentPage
         var item = button?.CommandParameter as InventoryManagement;
 
         if (item != null)
-        {
             _part.Remove(item);
-            ListOrders.ItemsSource = null;
-            ListOrders.ItemsSource = _part;
-        }
+        
     }
 
     private async void OM_OnClicked(object? sender, EventArgs e)
